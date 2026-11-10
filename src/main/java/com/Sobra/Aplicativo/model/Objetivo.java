@@ -1,43 +1,69 @@
 package com.Sobra.Aplicativo.model;
 
-import jakarta.persistence.*;
-import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.Instant;
 
+/**
+ * Meta de economia. O valor acumulado NÃO é coluna: é sempre a soma dos aportes (seção 5.7).
+ * aporte_mensal é o plano definido na criação (D-05).
+ */
 @Entity
-@Table(name = "tb_objetivo")
-@Data
+@Table(name = "objetivo")
 public class Objetivo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id ;
+    private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "usuario_id", nullable = false)
+    private Long usuarioId;
+
+    @Column(name = "nome", nullable = false, length = 80)
     private String nome;
 
-    @Column(nullable = false)
-    private BigDecimal valor_meta;
+    @Column(name = "valor_meta", nullable = false, precision = 12, scale = 2)
+    private BigDecimal valorMeta;
 
-    @Column(nullable = false)
+    @Column(name = "prazo_meses", nullable = false)
     private Integer prazoMeses;
 
-    @Column(nullable = false)
+    @Column(name = "aporte_mensal", nullable = false, precision = 12, scale = 2)
     private BigDecimal aporteMensal;
 
-    @Column(nullable = false)
-    @CreationTimestamp
-    private LocalDateTime criacao;
+    @Column(name = "imagem_url", length = 500)
+    private String imagemUrl;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id",nullable = false)
-    private User user;
+    @Column(name = "criado_em", nullable = false, updatable = false)
+    private Instant criadoEm;
 
-    @OneToMany(mappedBy = "objetivo")
-    private List<Aporte> aportes = new ArrayList<>();
+    @PrePersist
+    void antesDeInserir() {
+        if (criadoEm == null) {
+            criadoEm = Instant.now();
+        }
+    }
+
+    public Long getId() { return id; }
+    public Long getUsuarioId() { return usuarioId; }
+    public void setUsuarioId(Long usuarioId) { this.usuarioId = usuarioId; }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+    public BigDecimal getValorMeta() { return valorMeta; }
+    public void setValorMeta(BigDecimal valorMeta) { this.valorMeta = valorMeta; }
+    public Integer getPrazoMeses() { return prazoMeses; }
+    public void setPrazoMeses(Integer prazoMeses) { this.prazoMeses = prazoMeses; }
+    public BigDecimal getAporteMensal() { return aporteMensal; }
+    public void setAporteMensal(BigDecimal aporteMensal) { this.aporteMensal = aporteMensal; }
+    public String getImagemUrl() { return imagemUrl; }
+    public void setImagemUrl(String imagemUrl) { this.imagemUrl = imagemUrl; }
+    public Instant getCriadoEm() { return criadoEm; }
+    public void setCriadoEm(Instant criadoEm) { this.criadoEm = criadoEm; }
 }

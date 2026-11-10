@@ -1,0 +1,125 @@
+### Requisições de exemplo (IntelliJ HTTP Client / extensão REST Client do VS Code)
+### Rode na ordem: o cadastro devolve o token usado nas demais.
+@base = http://localhost:8084/api/v1
+@token = COLE_AQUI_O_TOKEN_DO_CADASTRO_OU_LOGIN
+
+### OP-22 Saúde
+GET {{base}}/saude
+
+### OP-01 Cadastro
+POST {{base}}/auth/cadastro
+Content-Type: application/json
+
+{"nome_completo": "Lucas Teste", "email": "lucas.teste@exemplo.com", "senha": "UmaSenhaBoa#2026", "confirmacao_senha": "UmaSenhaBoa#2026"}
+
+### OP-02 Login
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{"email": "lucas.teste@exemplo.com", "senha": "UmaSenhaBoa#2026"}
+
+### OP-07 Renda (passo 1)
+PUT {{base}}/configuracao/renda
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"valor": "5200.00"}
+
+### OP-08 Estimativas (passo 2) - exatamente as 7 categorias
+PUT {{base}}/configuracao/categorias
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"categorias": [
+  {"codigo": "MORADIA", "valor_estimado": "1800.00"},
+  {"codigo": "ALIMENTACAO", "valor_estimado": "900.00"},
+  {"codigo": "TRANSPORTE", "valor_estimado": "450.00"},
+  {"codigo": "SAUDE", "valor_estimado": null},
+  {"codigo": "EDUCACAO", "valor_estimado": "350.00"},
+  {"codigo": "LAZER", "valor_estimado": "300.00"},
+  {"codigo": "OUTROS", "valor_estimado": "200.00"}
+]}
+
+### OP-06 Estado da configuração
+GET {{base}}/configuracao
+Authorization: Bearer {{token}}
+
+### OP-12 Criar despesa
+POST {{base}}/despesas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"descricao": "Supermercado", "categoria_codigo": "ALIMENTACAO", "data": "2026-11-05", "valor": "120.00"}
+
+### OP-11 Despesas do mês
+GET {{base}}/despesas?mes=2026-11
+Authorization: Bearer {{token}}
+
+### OP-10 Home
+GET {{base}}/home?mes=2026-11
+Authorization: Bearer {{token}}
+
+### OP-14 Criar objetivo
+POST {{base}}/objetivos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"nome": "Reserva de Emergência", "valor_meta": "15000.00", "prazo_meses": 18}
+
+### OP-13 Listar objetivos
+GET {{base}}/objetivos
+Authorization: Bearer {{token}}
+
+### OP-16 Registrar aporte (troque 1 pelo id do objetivo)
+POST {{base}}/objetivos/1/aportes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"tipo": "EXTRA", "valor": "300.00", "data": "2026-11-05"}
+
+### OP-15 Detalhe do objetivo
+GET {{base}}/objetivos/1
+Authorization: Bearer {{token}}
+
+### OP-17 Calcular simulação
+POST {{base}}/simulacoes/calcular
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"valor_inicial": "1000.00", "aporte_mensal": "500.00", "prazo_meses": 24}
+
+### OP-18 Salvar simulação
+POST {{base}}/simulacoes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"valor_inicial": "1000.00", "aporte_mensal": "500.00", "prazo_meses": 24}
+
+### OP-19 Simulações salvas
+GET {{base}}/simulacoes?limite=50
+Authorization: Bearer {{token}}
+
+### OP-20 Perfil
+GET {{base}}/perfil
+Authorization: Bearer {{token}}
+
+### OP-21 Notificações
+PUT {{base}}/perfil/notificacoes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"notificacoes_ativas": false}
+
+### OP-09 Categorias
+GET {{base}}/categorias
+Authorization: Bearer {{token}}
+
+### OP-04 Pedir recuperação de senha
+POST {{base}}/auth/recuperar-senha
+Content-Type: application/json
+
+{"email": "lucas.teste@exemplo.com"}
+
+### OP-03 Logout
+POST {{base}}/auth/logout
+Authorization: Bearer {{token}}
